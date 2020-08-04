@@ -16,7 +16,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -25,6 +28,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Hanbings
  */
 public class PlayerJoin implements Listener {
+    FileConfiguration message = YamlConfiguration.loadConfiguration(new File("plugins/UpdateBooker/message.yml"));
+
     /**
      * 就在这里完成它！
      *
@@ -33,10 +38,43 @@ public class PlayerJoin implements Listener {
      */
     @EventHandler
     public void LoginEvent(LoginEvent event) {
+        // 检索版本号
+        File data = new File("plugins/UpdateBooker/data/" + message.getString("version") + ".yml");
+        if (!data.exists()) {
+            this.createFile("plugins/UpdateBooker/data/" + message.getString("version") + ".yml");
+        }
         Player p = event.getPlayer();
-        FileConfiguration message = YamlConfiguration.loadConfiguration(new File("plugins/UpdateBooker/message.yml"));
-        openBook(newBook("HelloWorld", "UpdateBooker", ChatColor.translateAlternateColorCodes('&', message.getString("message").replace("\\n", "\n"))), p);
+        FileConfiguration temp = YamlConfiguration.loadConfiguration(data);
+        if (!temp.getBoolean(p.getName())) {
 
+            temp.set(p.getName(), true);
+            try {
+                temp.save(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            openBook(newBook("HelloWorld", "UpdateBooker", ChatColor.translateAlternateColorCodes('&', message.getString("message").replace("\\n", "\n"))), p);
+        }
+    }
+
+    /**
+     * 创建一个新文件
+     */
+    public void createFile(String path) {
+        File file = new File("plugins/UpdateBooker/data");
+        //如果文件夹不存在
+        if (!file.exists()) {
+            //创建文件夹
+            Boolean mkdirs = file.mkdirs();
+        }
+        //异常处理
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+            bw.close();
+            //一定要关闭文件
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

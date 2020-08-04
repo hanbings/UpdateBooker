@@ -1,3 +1,6 @@
+# 神奇的版本号 改消息记得改这个
+version: 1
+# 消息
 message: "&1 no update \n
           &2 and never update \n
           &3 Happy Lazy"
