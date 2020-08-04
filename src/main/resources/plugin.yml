@@ -1,0 +1,6 @@
+name: UpdateBooker
+version: ${project.version}
+main: com.nanokylin.mc.updatebooker.UpdateBooker
+softdepend: [AuthMe, ProtocolLib]
+api-version: 1.13
+authors: [Hanbings]
